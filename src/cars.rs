@@ -41,36 +41,41 @@ impl Vehicles {
 
     pub fn add_car(&mut self, direction: Direction) {
         let route = random_route();
-        if direction == Direction::South {
-            self.vehicles.push(Vehicle{
-                route: route,
-                direction: direction,
-                x: 350,
-                y: -50,
-            });
-        } else if  direction == Direction::North {
-            self.vehicles.push(Vehicle{
-                route: route,
-                direction: direction,
-                x: 400,
-                y: 650,
-            });
-        } else if  direction == Direction::West {
-            self.vehicles.push(Vehicle{
-                route: route,
-                direction: direction,
-                x: 0,
-                y: 300
-            });
-        } else if  direction == Direction::East {
-            self.vehicles.push(Vehicle{
-                route: route,
-                direction: direction,
-                x: 800,
-                y: 250
-            });
-        }
-    }
+        
+        
+       let new_vehicle = match direction {
+        Direction::South => Vehicle {
+            route,
+            direction,
+            x: 350,
+            y: -50,
+        },
+        Direction::North => Vehicle {
+            route,
+            direction,
+            x: 400,
+            y: 650,
+        },
+        Direction::West => Vehicle {
+            route,
+            direction,
+            x: 0,
+            y: 300,
+        },
+        Direction::East => Vehicle {
+            route,
+            direction,
+            x: 800,
+            y: 250,
+        },
+    };
+
+        if self.vehicles.iter().any(|v| intersects(&new_vehicle, v)) {
+        return; 
+        };
+
+        self.vehicles.push(new_vehicle)
+}
 
     pub fn draw_cars(&mut self, canvas: &mut Canvas<Window>) {
         if self.vehicles.len() == 0 { return }
@@ -125,10 +130,29 @@ impl Vehicles {
 
 fn random_route() -> Route {
     let rng = rand::thread_rng().gen_range(0..3);
-    if rng == 0 {
-        return Route::Left;
-    } else if rng == 1 {
-        return Route::Right;
+    match rng {
+        0 => return Route::Left,
+        1=> return Route::Right,
+        2=> return Route::Straight,
+        _=> unreachable!(),
     }
-    Route::Straight
+}
+
+fn intersects(a: &Vehicle, b: &Vehicle) -> bool {
+    let size = 70;
+
+    let a_left = a.x;
+    let a_right = a.x + size;
+    let a_top = a.y;
+    let a_bottom = a.y + size;
+
+    let b_left = b.x;
+    let b_right = b.x + size;
+    let b_top = b.y;
+    let b_bottom = b.y + size;
+
+    !(a_left >= b_right ||
+      a_right <= b_left ||
+      a_top >= b_bottom ||
+      a_bottom <= b_top)
 }
