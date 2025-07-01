@@ -4,6 +4,25 @@ use sdl2::rect::Rect;
 use sdl2::pixels::Color;
 use rand::Rng;
 
+#[derive(PartialEq, Debug)]
+pub enum TrafficLight {
+    UpperRight,
+    UpperLeft,
+    LowerRight,
+    LowerLeft,
+}
+
+impl TrafficLight {
+ pub fn change_traffic_light(self) -> Self {
+        match self {
+            TrafficLight::UpperRight => TrafficLight::UpperLeft,
+            TrafficLight::UpperLeft => TrafficLight::LowerRight,
+            TrafficLight::LowerRight => TrafficLight::LowerLeft,
+            TrafficLight::LowerLeft => TrafficLight::UpperRight,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Vehicles {
     pub vehicles: Vec<Vehicle>
@@ -48,7 +67,7 @@ impl Vehicles {
             route,
             direction,
             x: 350,
-            y: -50,
+            y: 0,
         },
         Direction::North => Vehicle {
             route,
