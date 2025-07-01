@@ -1,11 +1,9 @@
 pub use crate::constants::color::*;
-// pub use crate::models::line::Line;
 pub use crate::models::car::*;
 pub use crate::models::light::Light;
 pub use crate::models::route::draw_intersection;
 pub use crate::models::window::create_window_and_canvas;
-pub use crate::util::util::get_random_num;
-// pub use crate::traits::shape::Shape;
+pub use crate::util::random::get_random_num;
 pub use rand::Rng;
 pub use sdl2::Sdl;
 pub use sdl2::event::Event;
