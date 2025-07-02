@@ -75,7 +75,7 @@ impl Vehicles {
                 route,
                 direction,
                 x: 400,
-                y: 650,
+                y: 600,
             }),
             Direction::West => RefCell::new(Vehicle {
                 route,
@@ -96,7 +96,7 @@ impl Vehicles {
             .borrow()
             .iter()
             .any(|v| intersects(&new_vehicle.borrow(), &v.borrow()))
-            // || self.vehicles.borrow().len() >= 8
+            || self.vehicles.borrow().len() >= 8
         {
             return;
         };
@@ -108,6 +108,9 @@ impl Vehicles {
         if self.vehicles.borrow().is_empty() {
             return;
         }
+
+        let mut indeces: Vec<usize> = Vec::new();
+        let (width, height) = canvas.window().size();
 
         for (index, vehicle) in &mut self.vehicles.borrow().iter().enumerate() {
             if vehicle.borrow().route == Route::Left {
@@ -242,30 +245,21 @@ impl Vehicles {
                     vehicle.borrow_mut().x += 2;
                 };
             }
-            // let (width, height) = canvas.window().size();
-            // let mut borrowed = self.vehicles.borrow_mut();
-            // match vehicle.borrow().direction {
-            //     Direction::North => {
-            //         if vehicle.borrow().y < 0 {
-            //             borrowed.remove(index);
-            //         }
-            //     }
-            //     Direction::South => {
-            //         if vehicle.borrow().y > height as i32 {
-            //             borrowed.remove(index);
-            //         }
-            //     }
-            //     Direction::East => {
-            //         if vehicle.borrow().x > width as i32 {
-            //             borrowed.remove(index);
-            //         }
-            //     }
-            //     Direction::West => {
-            //         if vehicle.borrow().x < 0 {
-            //             borrowed.remove(index);
-            //         }
-            //     }
-            // }
+            if !(vehicle.borrow().x >= -50
+                && vehicle.borrow().x <= width as i32
+                && vehicle.borrow().y >= -50
+                && vehicle.borrow().y <= height as i32)
+            {
+                indeces.push(index);
+            }
+        }
+        println!("{:?}", self.vehicles.borrow().len());
+        self.remove_cars(indeces);
+    }
+
+    pub fn remove_cars(&self, indeces: Vec<usize>) {
+        for index in indeces {
+            self.vehicles.borrow_mut().remove(index);
         }
     }
 
@@ -312,6 +306,5 @@ fn intersects(a: &Vehicle, b: &Vehicle) -> bool {
         || a_right <= b_left
         || a_top >= b_bottom
         || a_bottom <= b_top
-        || a.direction != b.direction
-    )
+        || a.direction != b.direction)
 }
