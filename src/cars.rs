@@ -23,12 +23,12 @@ impl TrafficLight {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Vehicles {
     pub vehicles: Vec<Vehicle>
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Vehicle {
     pub x: i32,
     pub y: i32,
@@ -36,14 +36,14 @@ pub struct Vehicle {
     pub direction: Direction,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Route {
 Left,
 Right,
 Straight,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Direction {
 North,
 South,
@@ -96,7 +96,7 @@ impl Vehicles {
         self.vehicles.push(new_vehicle)
 }
 
-    pub fn draw_cars(&mut self, canvas: &mut Canvas<Window>) {
+    pub fn draw_cars(&mut self, canvas: &mut Canvas<Window>, current_light: &TrafficLight) {
         if self.vehicles.len() == 0 { return }
 
         for vehicle in &mut self.vehicles {
@@ -111,8 +111,28 @@ impl Vehicles {
 
         canvas.fill_rect(Rect::new(vehicle.x, vehicle.y,50, 50)).unwrap();
 
+        // stop sign // 
+        if vehicle.direction == Direction::South && vehicle.y==200 &&  *current_light != TrafficLight::UpperLeft {
+            continue
+        }
+
+        if vehicle.direction == Direction::North && vehicle.y ==350 &&  *current_light != TrafficLight::LowerRight {
+            continue
+        }
+        
+        if vehicle.direction == Direction::West && vehicle.x ==300 &&  *current_light != TrafficLight::LowerLeft {
+            continue
+        }
+
+        if vehicle.direction == Direction::East && vehicle.x ==450 &&  *current_light != TrafficLight::UpperRight {
+            continue
+        }
+        
         if  vehicle.y <= 300 && vehicle.direction == Direction::North && vehicle.route == Route::Right {
-            vehicle.x += 2
+            vehicle.x += 2;
+            // if self.vehicles.clone().iter().any(|v| intersects(&vehicle, v)) {
+            // vehicle.x -= 2; 
+            // };
         } else if  vehicle.y <= 250 && vehicle.direction == Direction::North && vehicle.route == Route::Left {
             vehicle.x -= 2
         } else if  vehicle.y >= 250 && vehicle.direction == Direction::South && vehicle.route == Route::Right {

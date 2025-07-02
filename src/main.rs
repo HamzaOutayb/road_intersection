@@ -53,9 +53,8 @@ fn main() {
         canvas.set_draw_color(Color::BLACK);
         canvas.clear();
 
-        // Pass a reference to traffic_light here:
         draw_roads(&mut canvas, &traffic_light);
-        all_vehicles.draw_cars(&mut canvas);
+        all_vehicles.draw_cars(&mut canvas, &traffic_light);
 
         canvas.present();
 
